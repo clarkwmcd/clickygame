@@ -2,10 +2,11 @@ import React, { Component } from "react";
 import FriendCard from "./components/FriendCard";
 import Nav from "./components/Nav";
 import cartoons from "./cartoons.json";
+import Col from "./components/Col";
+
 // import "./App.css";
 
 class App extends Component {
-  // Setting this.state.friends to the friends json array
   state = {
     cartoons: cartoons,
     score: 0,
@@ -14,13 +15,10 @@ class App extends Component {
     topScore: 0
   };
 
-
   checkForGuessed = id => {
     this.state.cartoons.sort(function(a, b){return 0.5 - Math.random()});
-
     if(this.state.guessed.includes(id)) {
       this.setState({ score: 0, guessed: [], status:"You Lost! That cartoon was already picked" });
-
     }
     else {
       if (this.state.guessed.length === 11) {
@@ -32,7 +30,6 @@ class App extends Component {
         }
         else{
           this.setState({ score: this.state.score + 1, status: "You guessed correctly"});
-
         }
         this.state.guessed.push(id);
       }
@@ -49,16 +46,23 @@ class App extends Component {
             topScore={this.state.topScore}
           />
         </div>
-          {this.state.cartoons.map(cartoons => (
-            <FriendCard
-              check={this.checkForGuessed}
-              id={cartoons.id}
-              key={cartoons.id}
-              name={cartoons.name}
-              image={cartoons.image}
-            />
-          ))}
-</div>
+
+        <div className="row">
+          {
+            this.state.cartoons.map(cartoons => (
+              <Col key={cartoons.id}>
+              <FriendCard
+                check={this.checkForGuessed}
+                id={cartoons.id}
+                key={cartoons.id}
+                name={cartoons.name}
+                image={cartoons.image}
+              />
+          </Col>
+        ))
+        }
+        </div>
+      </div>
     );
   }
 }
