@@ -1,45 +1,64 @@
 import React, { Component } from "react";
 import FriendCard from "./components/FriendCard";
-import Wrapper from "./components/Wrapper";
-import Title from "./components/Title";
 import Nav from "./components/Nav";
-
-import friends from "./friends.json";
-import "./App.css";
+import cartoons from "./cartoons.json";
+// import "./App.css";
 
 class App extends Component {
   // Setting this.state.friends to the friends json array
   state = {
-    friends
+    cartoons: cartoons,
+    score: 0,
+    guessed: [],
+    status: "",
+    topScore: 0
   };
 
-  removeFriend = id => {
-    // Filter this.state.friends for friends with an id not equal to the id being removed
-    const friends = this.state.friends.filter(friend => friend.id !== id);
-    // Set this.state.friends equal to the new friends array
-    this.setState({ friends });
-  };
 
-  // Map over this.state.friends and render a FriendCard component for each friend object
+  checkForGuessed = id => {
+    this.state.cartoons.sort(function(a, b){return 0.5 - Math.random()});
+
+    if(this.state.guessed.includes(id)) {
+      this.setState({ score: 0, guessed: [], status:"You Lost! That cartoon was already picked" });
+
+    }
+    else {
+      if (this.state.guessed.length === 11) {
+        this.setState({ status:"Winner", guessed: [], score: 0 });
+      }
+      else {
+        if(this.state.score + 1 > this.state.topScore) {
+          this.setState({ score: this.state.score + 1, status: "You guessed correctly", topScore: this.state.topScore+1});
+        }
+        else{
+          this.setState({ score: this.state.score + 1, status: "You guessed correctly"});
+
+        }
+        this.state.guessed.push(id);
+      }
+    }
+  }
+
   render() {
     return (
-      <Wrapper>
-        <div>
-          <Nav/>
-        </div>
-
-        {this.state.friends.map(friend => (
-          <FriendCard
-            removeFriend={this.removeFriend}
-            id={friend.id}
-            key={friend.id}
-            name={friend.name}
-            image={friend.image}
-            occupation={friend.occupation}
-            location={friend.location}
+      <div className="container">
+        <div className="container">
+          <Nav
+            counter={this.state.score}
+            status={this.state.status}
+            topScore={this.state.topScore}
           />
-        ))}
-      </Wrapper>
+        </div>
+          {this.state.cartoons.map(cartoons => (
+            <FriendCard
+              check={this.checkForGuessed}
+              id={cartoons.id}
+              key={cartoons.id}
+              name={cartoons.name}
+              image={cartoons.image}
+            />
+          ))}
+</div>
     );
   }
 }
